@@ -13,19 +13,18 @@ def generate_unique_code():
         
     return code
 
-# Create your models here.
-# models are the tables of the database
-# these are the fields that will hep with the creationg of the records for the database
 
 class Room(models.Model):
     # code is the code to be shared for the room
-    code = models.CharField(max_length=8, default=generate_unique_code, unique=True)
-    # host is the host of the room, unique mean can only have one host
-    username = models.CharField(max_length=50, unique=True)
-    host = models.CharField(max_length=50, unique=True)
+    code = models.CharField(max_length=8, default=generate_unique_code, unique=True)    
     words_per_user = models.IntegerField(null=False, default=3)
     created_at = models.DateTimeField(auto_now_add=True)
     
-    
+
+class User(models.Model):
+    username = models.CharField(max_length=50, unique=True)
+    room = models.ForeignKey(Room, on_delete=models.CASCADE)
+    is_host = models.BooleanField(default=False)
+    session_id = models.CharField(max_length=50, unique=True)
     
     
