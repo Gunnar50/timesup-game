@@ -71,18 +71,18 @@ class CreateRoomView(APIView):
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
             # create a room
-            guest_can_pause = serializer.data.get("guest_can_pause")
-            votes_to_skip = serializer.data.get("votes_to_skip")
-            host = self.request.session.session_key
-            queryset = Room.objects.filter(host=host)
+            username = serializer.data.get("username")
+            words_per_user = serializer.data.get("words_per_user")
+            host_id = self.request.session.session_key
+            queryset = Room.objects.filter(user__session_id=host_id, user__is_host=True)
             
             # if the room already exists we dont want to create a new room
             if queryset.exists():
                 # grab the active room and update its settings
                 room = queryset[0] 
-                room.guest_can_pause = guest_can_pause
-                room.votes_to_skip = votes_to_skip
-                room.save(update_fields=["guest_can_pause", "votes_to_skip"])
+                room.username = username
+                room.words_per_user = words_per_user
+                room.save(update_fields=["username", "words_per_user"])
                 
                 # this new item room code is to check later if the user reconnect to the app then the user
                 # do not need to type the room code again
@@ -92,7 +92,7 @@ class CreateRoomView(APIView):
             
             # if not updating, then create a new room
             else:
-                room = Room(host=host, guest_can_pause=guest_can_pause, votes_to_skip=votes_to_skip)
+                room = Room(host=host, username=username, words_per_user=words_per_user)
                 room.save()
                 
                 # this new item room code is to check later if the user reconnect to the app then the user
