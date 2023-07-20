@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework import generics, status
-from .serializers import RoomSerializer, CreateRoomSerializer, UpdateRoomSerializer
-from .models import Room
+from .serializers import RoomSerializer, CreateRoomSerializer, UpdateRoomSerializer, UserSerializer
+from .models import Room, User
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.http import JsonResponse
@@ -74,15 +74,17 @@ class CreateRoomView(APIView):
             username = serializer.data.get("username")
             words_per_user = serializer.data.get("words_per_user")
             host_id = self.request.session.session_key
-            queryset = Room.objects.filter(user__session_id=host_id, user__is_host=True)
+            queryset = User.objects.filter(session_id=host_id, is_host=True)
             
             # if the room already exists we dont want to create a new room
             if queryset.exists():
                 # grab the active room and update its settings
-                room = queryset[0] 
-                room.username = username
+                user = queryset[0]
+                user.username = username
+                room = user.room
                 room.words_per_user = words_per_user
-                room.save(update_fields=["username", "words_per_user"])
+                user.save(update_fields=["username"])
+                room.save(update_fields=["words_per_user"])
                 
                 # this new item room code is to check later if the user reconnect to the app then the user
                 # do not need to type the room code again
@@ -92,8 +94,9 @@ class CreateRoomView(APIView):
             
             # if not updating, then create a new room
             else:
-                room = Room(host=host, username=username, words_per_user=words_per_user)
+                room = Room(words_per_user=words_per_user)
                 room.save()
+                User.objects.create(username=username, session_id=host_id, room=room, is_host=True)
                 
                 # this new item room code is to check later if the user reconnect to the app then the user
                 # do not need to type the room code again
@@ -102,6 +105,16 @@ class CreateRoomView(APIView):
                 return Response(RoomSerializer(room).data, status=status.HTTP_201_CREATED)
                 
         return Response(RoomSerializer(room).data, status=status.HTTP_400_BAD_REQUEST)
+    
+class RoomUsersView(APIView):
+    def get(self, request, format=None):
+        room_code = request.GET.get("room_code")
+        room = Room.objects.filter(code=room_code)
+        if room.exists():
+            users = User.objects.filter(room=room[0])
+            return Response(UserSerializer(users, many=True).data, status=status.HTTP_200_OK)
+        else:
+            return Response({"Bad Request": "Room Not Found"}, status=status.HTTP_404_NOT_FOUND)
     
     
 class UserInRoom(APIView):
