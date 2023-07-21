@@ -18,6 +18,7 @@ class Room(models.Model):
     # code is the code to be shared for the room
     code = models.CharField(max_length=8, default=generate_unique_code, unique=True)    
     words_per_user = models.IntegerField(null=False, default=3)
+    num_teams = models.IntegerField(null=False, default=2)
     created_at = models.DateTimeField(auto_now_add=True)
     
 
@@ -26,5 +27,10 @@ class User(models.Model):
     room = models.ForeignKey(Room, on_delete=models.CASCADE)
     is_host = models.BooleanField(default=False)
     session_id = models.CharField(max_length=50, unique=True)
+    team = models.CharField(null=False, max_length=1, default=0)
     
+
+class Words(models.Model):
+    words = models.CharField(max_length=100, default="")
+    room = models.ForeignKey(Room, on_delete=models.CASCADE)
     
