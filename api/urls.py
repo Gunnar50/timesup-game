@@ -9,4 +9,5 @@ urlpatterns = [
     path("user-in-room", views.UserInRoom.as_view()),
     path("exit-room", views.ExitRoom.as_view()),
     path("update-room", views.UpdateRoom.as_view()),
+    path("get-users", views.GetUsersInRoom.as_view()),
 ]
