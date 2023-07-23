@@ -1,26 +1,32 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import getCsrfToken from "./GetCSRF";
+import 'bootstrap/dist/css/bootstrap.css';
+
 
 function CreateRoom() {
     const navigate = useNavigate();
     const [username, setUsername] = useState("");
-    const [words_per_user, setWordPerUser] = useState(3);
+    const [words_per_user, setWordsPerUser] = useState(3);
     const [num_teams, setNumTeams] = useState(2);
-
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        const reqOptions = {
-            method: "POST",
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify({
-                "username": username,
-                "words_per_user": words_per_user,
-                "num_teams": num_teams
-            }),
-        };
-        fetch("/api/create-room", reqOptions)
-        .then((res) => {
+        
+        getCsrfToken().then(csrfToken => {
+            fetch("/api/create-room", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        'X-CSRFToken': csrfToken,
+                    },
+                    body: JSON.stringify({
+                        "username": username,
+                        "words_per_user": words_per_user,
+                        "num_teams": num_teams
+                    }),  
+            })
+            .then((res) => {
             if (!res.ok) throw new Error(res.status);
             return res.json();
         })
@@ -28,6 +34,9 @@ function CreateRoom() {
             console.log(data);
             navigate("/");
         }).catch(err => console.log(err));
+        });
+        
+        
     }
 
     return (
