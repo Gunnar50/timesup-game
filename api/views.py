@@ -5,6 +5,10 @@ from .models import Room, User
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.http import JsonResponse
+from django.middleware.csrf import get_token
+
+def csrf(request):
+    return JsonResponse({'csrfToken': get_token(request)})
 
 
 # Create your views here.
