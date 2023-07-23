@@ -8,7 +8,8 @@ Content-Type: application/json
 
 {
     "username": "testname",
-    "words_per_user": 5
+    "words_per_user": 5,
+    "num_teams": 3
 }
 
 ###
