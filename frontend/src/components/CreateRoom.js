@@ -45,11 +45,17 @@ function CreateRoom() {
             <div>
                 <form onSubmit={handleSubmit}>
                     <label>Username</label>
+                    <br/>
                     <input type="text" onChange={(e) => {setUsername(e.target.value)}}/>
+                    <br/>
                     <label>Words Per Player</label>
+                    <br/>
                     <input type="number" value={words_per_user} onChange={(e) => {setWordsPerUser(e.target.value)}}/>
+                    <br/>
                     <label>Number of Teams</label>
+                    <br/>
                     <input type="number" value={num_teams} onChange={(e) => {setNumTeams(e.target.value)}}/>
+                    <br/>
                     <button type="submit" className="btn btn-primary">Create Room</button>
                 </form>
             </div>
