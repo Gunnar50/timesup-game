@@ -3,6 +3,7 @@ from . import views
 
 urlpatterns = [
     path("room", views.RoomView.as_view()),
+    path('csrf', views.csrf, name='csrf'),
     path("create-room", views.CreateRoomView.as_view()),
     path("get-room", views.GetRoom.as_view()),
     path("join-room", views.JoinRoom.as_view()),
