@@ -1,9 +1,9 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { BrowserRouter as Router, Routes, Route} from 'react-router-dom';
 import Room from "./Room";
 import CreateRoom from "./CreateRoom";
 import JoinRoom from "./JoinRoom";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Navigate } from 'react-router-dom';
 
 function HomePage() {
 	const navigate = useNavigate();
@@ -19,16 +19,29 @@ function HomePage() {
 
 function Home() {
 	
+	const [code, setCode] = useState(null);
+
+	const getUserInRoom = () => {
+		fetch("/api/user-in-room")
+		.then(res => res.json())
+		.then(data => setCode(data.code));
+	}
+
+	useEffect(() => getUserInRoom(), []);
+
+	const clearRoomCode = () => {
+		setCode(null);
+	}
+
 
 	return (
 		<Router>
 			<Routes>
-				<Route exact path='/' element={<HomePage/>} />
+				<Route exact path='/' element={code ? <Navigate to={`/room/${code}`} /> : <HomePage/>} />
 				<Route path='/create-room' element={<CreateRoom/>} />
 				<Route path='/join-room' element={<JoinRoom/>} />
-				<Route path='/room/:code' element={<Room/>} />
+				<Route path='/room/:code' element={<Room leaveRoomCallBack={clearRoomCode} />} />
 			</Routes>      
-			
 		</Router>
 	)
 }
