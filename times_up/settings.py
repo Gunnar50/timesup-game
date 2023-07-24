@@ -39,7 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     "api",
     "rest_framework",
-    "frontend"
+    "frontend",
+    "channels"
 ]
 
 MIDDLEWARE = [
@@ -71,7 +72,8 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'times_up.wsgi.application'
-
+# Use channels as the main ASGI application
+ASGI_APPLICATION = "times_up.routing.application"
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
