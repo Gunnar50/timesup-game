@@ -4,6 +4,7 @@ import getCsrfToken from "./GetCSRF";
 
 
 function JoinRoom() {
+    const navigate = useNavigate();
 	const [code, setCode] = useState("");
 	const [username, setUsername] = useState("");
 
@@ -24,12 +25,9 @@ function JoinRoom() {
             })
             .then((res) => {
             if (!res.ok) throw new Error(res.status);
-            return res.json();
+            else navigate(`/room/${code}`);
         })
-        .then((data) => {
-            console.log(data);
-            // navigate("/");
-        }).catch(err => console.log(err));
+        .catch(err => console.log(err));
         });
 	};
 
