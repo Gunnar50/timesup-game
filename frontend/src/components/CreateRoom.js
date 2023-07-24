@@ -32,7 +32,7 @@ function CreateRoom() {
         })
         .then((data) => {
             console.log(data);
-            navigate("/");
+            navigate(`/room/${data.code}`);
         }).catch(err => console.log(err));
         });
         
