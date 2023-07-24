@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react'
 import { useParams } from 'react-router-dom'
 import { useNavigate } from 'react-router-dom';
+import getCsrfToken from "./GetCSRF";
 
 function Room(props) {
 	const intervalRef = useRef();
@@ -20,7 +21,19 @@ function Room(props) {
 		.then(data => setDetails(data));
 	};
 
-	const handleExitRoomButton = () = {
+	const handleExitRoomButton = () => {
+		getCsrfToken().then(csrfToken => {
+			fetch("/api/exit-room", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+					'X-CSRFToken': csrfToken,
+				},
+			}).then((res) => {
+				props.leaveRoomCallBack();
+				navigate("/");
+			})
+		})
 		
 	}
 
@@ -30,14 +43,14 @@ function Room(props) {
 		.then(data => setUsers(data));
 	};
 
-	useEffect(() => getRoomDetails(), []);
+	useEffect(() => {getRoomDetails();getUsers();}, []);
 
-	useEffect(() => {
-        intervalRef.current = setInterval(getUsers, 1000);
-        return () => {
-            clearInterval(intervalRef.current);
-        }
-    }, []);
+	// useEffect(() => {
+    //     intervalRef.current = setInterval(getUsers, 1000);
+    //     return () => {
+    //         clearInterval(intervalRef.current);
+    //     }
+    // }, []);
 
 
 	if(!details) return null;
@@ -46,6 +59,7 @@ function Room(props) {
 		<div>
 			<h2>Room Code: {code}</h2>
 			{details.is_host && <button>Start</button>}
+			<button onClick={() => {handleExitRoomButton()}}>Exit</button>
 
 			<p>When the game starts you have to write {details.words_per_user} words.</p>
 
