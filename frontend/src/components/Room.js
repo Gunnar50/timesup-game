@@ -20,6 +20,10 @@ function Room(props) {
 		.then(data => setDetails(data));
 	};
 
+	const handleExitRoomButton = () = {
+		
+	}
+
 	const getUsers = () => {
 		fetch(`/api/get-users?code=${code}`)
 		.then(res => res.json())
