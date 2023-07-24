@@ -40,29 +40,33 @@ class GetRoom(APIView):
     def get(self, request, format=None):
         # use requests.GET -> for GET requests
         code = request.GET.get(self.lookup_url_kwargs)
-        if code != None:
-            session_id = self.request.session.session_key
-            user_query = User.objects.filter(session_id=session_id)
-            print(session_id)
-            if user_query.exists():
-                user = user_query[0]
-                query_room = Room.objects.filter(code=code)
-                if query_room.exists():
-                    room = query_room[0]
-                    if user.room == room:
-                        data = RoomSerializer(room).data
-                        data["is_host"] = user.is_host
-                        return Response(data, status=status.HTTP_200_OK)
-                    return Response({"Incorrect Room": "User Must Leave The Room First"}, status=status.HTTP_400_BAD_REQUEST)
-                return Response({"Room Not Found": "Invalid Room Code"}, status=status.HTTP_404_NOT_FOUND)
+        if code is None:
+            return Response({"Bad Request": "Code parameter not found in request."}, status=status.HTTP_400_BAD_REQUEST)
+        
+        session_id = self.request.session.session_key
+        user_query = User.objects.filter(session_id=session_id)
+        if not user_query.exists():
             return Response({"User Not Found": "User must joing a room first"}, status=status.HTTP_404_NOT_FOUND)
-        return Response({"Bad Request": "Code parameter not found in request."}, status=status.HTTP_400_BAD_REQUEST)
-
+        
+        user = user_query[0]
+        query_room = Room.objects.filter(code=code)
+        if not query_room.exists():
+            return Response({"Room Not Found": "Invalid Room Code"}, status=status.HTTP_404_NOT_FOUND)
+        
+        room = query_room[0]
+        if user.room != room:
+            return Response({"Incorrect Room": "User Must Leave The Room First"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        data = RoomSerializer(room).data
+        data["is_host"] = user.is_host
+        return Response(data, status=status.HTTP_200_OK)
+        
+        
+        
 class JoinRoom(APIView):
     def post(self, request, format=None):
         # if current user does not have an active session with the server
         session_id = self.request.session.session_key
-        print(1, session_id)
         if self.request.session.exists(session_id):
             if User.objects.filter(session_id=session_id).exists():
                 return Response({"Not Allowed": "User can only be in on room at one time."}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
@@ -70,7 +74,6 @@ class JoinRoom(APIView):
             # create a session
             self.request.session.create()
             session_id = self.request.session.session_key
-        print(2, session_id)
             
         # request.data -> use data for post requests.
         username = request.data.get("username")
