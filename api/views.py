@@ -12,6 +12,19 @@ def csrf(request):
     return JsonResponse({'csrfToken': get_token(request)})
 
 
+class GetCurrentUser(APIView):
+    def get(self, request, format=None):
+        session_id = self.request.session.session_key
+        if not self.request.session.exists(session_id):
+            return Response({"Bad Request": "Current user not in a Room"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        user_query = User.objects.filter(session_id=session_id)
+        if user_query.exists():
+            current_user = user_query[0]
+            data = UserSerializer(current_user).data
+            print(data)
+            return Response(data, status=status.HTTP_200_OK)
+
 # Create your views here.
 class RoomView(generics.ListAPIView):
     # retrive all instances of the Room models
@@ -30,6 +43,7 @@ class GetRoom(APIView):
         if code != None:
             session_id = self.request.session.session_key
             user_query = User.objects.filter(session_id=session_id)
+            print(session_id)
             if user_query.exists():
                 user = user_query[0]
                 query_room = Room.objects.filter(code=code)
