@@ -5,6 +5,7 @@ import getCsrfToken from "./GetCSRF";
 
 function Room(props) {
 	const intervalRef = useRef();
+	const socketRef = useRef();
 	const navigate = useNavigate();
 	const {code} = useParams();
 	const [details, setDetails] = useState(null);
@@ -45,12 +46,32 @@ function Room(props) {
 
 	useEffect(() => {getRoomDetails();getUsers();}, []);
 
-	// useEffect(() => {
-    //     intervalRef.current = setInterval(getUsers, 1000);
-    //     return () => {
-    //         clearInterval(intervalRef.current);
-    //     }
-    // }, []);
+	useEffect(() => {
+        intervalRef.current = setInterval(getUsers, 1000);
+        return () => {
+            clearInterval(intervalRef.current);
+        }
+    }, []);
+
+	useEffect(() => {
+		socketRef.current = new WebSocket(`ws://localhost:8000/ws/game/${code}/`);
+	
+		socketRef.current.onmessage = function(event) {
+			const data = JSON.parse(event.data);
+			console.log(data.message);  // Do something with this message
+			if (data.message === "start game") console.log("game started");
+		}
+	
+		// Make sure to close the WebSocket connection when the component unmounts
+		return () => {
+			socketRef.current.close();
+		}
+	}, []);
+
+	const handleStartGameButton = () => {
+		const message = JSON.stringify({message: "start game"});
+		socketRef.current.send(message);
+	}
 
 
 	if(!details) return null;
@@ -58,7 +79,7 @@ function Room(props) {
 	return (
 		<div>
 			<h2>Room Code: {code}</h2>
-			{details.is_host && <button>Start</button>}
+			{details.is_host && <button onClick={() => {handleStartGameButton()}}>Start</button>}
 			<button onClick={() => {handleExitRoomButton()}}>Exit</button>
 
 			<p>When the game starts you have to write {details.words_per_user} words.</p>
