@@ -44,22 +44,23 @@ function Room(props) {
 		.then(data => setUsers(data));
 	};
 
-	useEffect(() => {getRoomDetails();getUsers();}, []);
+	// useEffect(() => {getRoomDetails();getUsers();}, []);
+
+	// useEffect(() => {
+    //     intervalRef.current = setInterval(getUsers, 1000);
+    //     return () => {
+    //         clearInterval(intervalRef.current);
+    //     }
+    // }, []);
 
 	useEffect(() => {
-        intervalRef.current = setInterval(getUsers, 1000);
-        return () => {
-            clearInterval(intervalRef.current);
-        }
-    }, []);
-
-	useEffect(() => {
-		socketRef.current = new WebSocket(`ws://localhost:8000/ws/game/${code}/`);
+		// socketRef.current = new WebSocket(`ws://localhost:8000/ws/game/${code}/`);
+		socketRef.current = new WebSocket(`ws://localhost:8000/ws/game/`);
 	
 		socketRef.current.onmessage = function(event) {
 			const data = JSON.parse(event.data);
 			console.log(data.message);  // Do something with this message
-			if (data.message === "start game") console.log("game started");
+			// if (data.message === "start game") console.log("game started");
 		}
 	
 		// Make sure to close the WebSocket connection when the component unmounts
