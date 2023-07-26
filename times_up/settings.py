@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    "daphne",
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -40,7 +41,6 @@ INSTALLED_APPS = [
     "api",
     "rest_framework",
     "frontend",
-    "channels",
     "game"
 ]
 
@@ -74,11 +74,11 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'times_up.wsgi.application'
 # Use channels as the main ASGI application
-ASGI_APPLICATION = "times_up.routing.application"
+ASGI_APPLICATION = "times_up.asgi.application"
 CHANNEL_LAYERS = {
-    'default': {
-        'BACKEND': 'channels.layers.InMemoryChannelLayer'
-    }
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer",
+    },
 }
 
 
