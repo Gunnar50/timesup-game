@@ -40,7 +40,8 @@ INSTALLED_APPS = [
     "api",
     "rest_framework",
     "frontend",
-    "channels"
+    "channels",
+    "game"
 ]
 
 MIDDLEWARE = [
@@ -74,6 +75,12 @@ TEMPLATES = [
 WSGI_APPLICATION = 'times_up.wsgi.application'
 # Use channels as the main ASGI application
 ASGI_APPLICATION = "times_up.routing.application"
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels.layers.InMemoryChannelLayer'
+    }
+}
+
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
