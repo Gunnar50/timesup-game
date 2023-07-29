@@ -20,31 +20,32 @@ function HomePage() {
 function Home() {
 	
 	const [code, setCode] = useState(null);
-	const socket = new WebSocket(`ws://localhost:8000/ws/game/`);
+	// const socket = new WebSocket(`ws://localhost:8000/ws/game/`);
+	// const socket = new WebSocket(`ws://127.0.0.1:8000/ws/game/`);
 
-	socket.onopen = () => {
-		console.log("WebSocket connection opened");
-	};
+	// socket.onopen = () => {
+	// 	console.log("WebSocket connection opened");
+	// };
 	
-	socket.onerror = (error) => {
-		console.log("WebSocket error: ", error);
-	};
+	// socket.onerror = (error) => {
+	// 	console.log("WebSocket error: ", error);
+	// };
 	
-	socket.onclose = (event) => {
-		console.log("WebSocket connection closed: ", event);
-	};
+	// socket.onclose = (event) => {
+	// 	console.log("WebSocket connection closed: ", event);
+	// };
 	
 	
-	useEffect(() => {
-		socket.onmessage = (e) => {
-			let data = JSON.parse(e.data);
-			console.log(data);
-		};
+	// useEffect(() => {
+	// 	socket.onmessage = (e) => {
+	// 		let data = JSON.parse(e.data);
+	// 		console.log(data.value);
+	// 	};
 
-		return () => {
-			socket.close();
-		}
-	}, []);
+	// 	return () => {
+	// 		socket.close();
+	// 	}
+	// }, []);
 
 	const getUserInRoom = () => {
 		fetch("/api/user-in-room")
