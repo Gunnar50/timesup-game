@@ -44,7 +44,7 @@ function Room(props) {
 		.then(data => setUsers(data));
 	};
 
-	// useEffect(() => {getRoomDetails();getUsers();}, []);
+	useEffect(() => {getRoomDetails();getUsers();}, []);
 
 	// useEffect(() => {
     //     intervalRef.current = setInterval(getUsers, 1000);
@@ -54,13 +54,21 @@ function Room(props) {
     // }, []);
 
 	useEffect(() => {
-		// socketRef.current = new WebSocket(`ws://localhost:8000/ws/game/${code}/`);
-		socketRef.current = new WebSocket(`ws://localhost:8000/ws/game/`);
+		socketRef.current = new WebSocket(`ws://localhost:8000/ws/game${window.location.pathname}/`);
 	
 		socketRef.current.onmessage = function(event) {
 			const data = JSON.parse(event.data);
-			console.log(data.message);  // Do something with this message
-			// if (data.message === "start game") console.log("game started");
+			const command = data.command;
+			console.log(command);  // Do something with this message
+
+			if(command === "message") {
+				console.log(data.message);
+				console.log("Starting...");
+			}
+			if(command === "joined") {
+				let user = data.user;
+				console.log(user);
+			}
 		}
 	
 		// Make sure to close the WebSocket connection when the component unmounts
@@ -69,8 +77,19 @@ function Room(props) {
 		}
 	}, []);
 
+	useEffect(() => {
+		socketRef.current.onopen = () => {
+			socketRef.current.send(
+				JSON.stringify({
+					command: "joined",
+					user: users,
+				})
+			);
+		};
+	}, []);
+
 	const handleStartGameButton = () => {
-		const message = JSON.stringify({message: "start game"});
+		const message = JSON.stringify({command: "message", message: "StartGame"});
 		socketRef.current.send(message);
 	}
 
