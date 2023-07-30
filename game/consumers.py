@@ -39,6 +39,7 @@ class GameConsumer(AsyncJsonWebsocketConsumer):
                 }
             )
             
+            
         if command == "message":
             # Send message to room group
             await self.channel_layer.group_send(
