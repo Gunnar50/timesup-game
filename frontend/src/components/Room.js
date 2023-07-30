@@ -65,7 +65,7 @@ function Room(props) {
 				console.log(data.message);
 				console.log("Starting...");
 			}
-			if(command === "joined") {
+			if(command === "joined") { 
 				let user = data.user;
 				console.log(user);
 			}
