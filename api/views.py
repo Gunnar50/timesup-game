@@ -158,7 +158,7 @@ class GetUsersInRoom(APIView):
         else:
             return Response({"Bad Request": "Room Not Found"}, status=status.HTTP_404_NOT_FOUND)
     
-    
+     
 class UserInRoom(APIView):
     def get(self, request, format=None):
         # if current user does not have an active session with the server
