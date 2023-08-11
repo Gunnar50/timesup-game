@@ -35,7 +35,7 @@ function CreateRoom() {
             navigate(`/room/${data.code}`);
         }).catch(err => console.log(err));
         });
-         
+          
         
     }
 
