@@ -29,7 +29,7 @@ function JoinRoom() {
         })
         .catch(err => console.log(err));
         });
-	};
+	}; 
     
 
     return (
