@@ -51,7 +51,7 @@ function Room(props) {
     //     return () => {
     //         clearInterval(intervalRef.current);
     //     }
-    // }, []);
+    // }, []); 
 
 	useEffect(() => {
 		socketRef.current = new WebSocket(`ws://localhost:8000/ws/game${window.location.pathname}/`);
